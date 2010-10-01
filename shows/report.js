@@ -30,15 +30,16 @@ function(doc, req) {
 
     for each (var result in doc.results) {
       var types = {
-        'firefox-general' : 'firefox/',
-        'mozmill-test' : 'firefox/',
-        'mozmill-restart-test' : 'firefox/',
+        'firefox-general' : 'firefox',
+        'mozmill-test' : 'firefox',
+        'mozmill-restart-test' : 'firefox',
         'firefox-update' : 'softwareUpdate',
-        'firefox-addons' : 'addons/'
+        'firefox-addons' : 'addons'
       };
 
       var type = types[doc.report_type];
-      var filename = type + result.filename.split(type)[1]
+      var filename = type + result.filename.split(type)[1];
+      filename = filename.replace(/\\/g, "/");
       
       var status = "passed";
       if (result.skipped) {
