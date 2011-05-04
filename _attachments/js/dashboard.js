@@ -1267,14 +1267,8 @@ var BYTE_TO_MEGABYTE = 1/1048576;
 
         var tests = resp.endurance.results;
         var testCount = tests.length;
-        var allocatedMemoryResults = [];
-        var mappedMemoryResults = [];
-        var testAverageAllocatedMemoryResults = [];
-        var testAverageMappedMemoryResults = [];
 
         for (var i=0; i < testCount; i++) {
-            var testAllocatedMemoryResults = [];
-            var testMappedMemoryResults = [];
             var testIterationCount = tests[i].iterations.length;
             var testCheckpointCount = tests[i].iterations[0].checkpoints.length;
 
@@ -1301,23 +1295,18 @@ var BYTE_TO_MEGABYTE = 1/1048576;
                   mappedMemory : Math.round(tests[i].iterations[j].checkpoints[k].mapped * BYTE_TO_MEGABYTE)
                 });
 
-                testAllocatedMemoryResults.push(Math.round(tests[i].iterations[j].checkpoints[k].allocated * BYTE_TO_MEGABYTE));
-                testMappedMemoryResults.push(Math.round(tests[i].iterations[j].checkpoints[k].mapped * BYTE_TO_MEGABYTE));
               }
             }
-
-            allocatedMemoryResults = allocatedMemoryResults.concat(testAllocatedMemoryResults);
-            mappedMemoryResults = mappedMemoryResults.concat(testMappedMemoryResults);
-            testAverageAllocatedMemoryResults.push(average(testAllocatedMemoryResults));
-            testAverageMappedMemoryResults.push(average(testMappedMemoryResults));
 
             context.tests.push({
               testFile : tests[i].testFile.split(type)[1].replace(/\\/g, '/'),
               testMethod : tests[i].testMethod,
               checkpointCount : testCheckpointCount,
+
               minAllocatedMemory : Math.round(tests[i].stats.allocated.min * BYTE_TO_MEGABYTE),
               maxAllocatedMemory : Math.round(tests[i].stats.allocated.max * BYTE_TO_MEGABYTE),
               averageAllocatedMemory : Math.round(tests[i].stats.allocated.average * BYTE_TO_MEGABYTE),
+
               minMappedMemory : Math.round(tests[i].stats.mapped.min * BYTE_TO_MEGABYTE),
               maxMappedMemory : Math.round(tests[i].stats.mapped.max * BYTE_TO_MEGABYTE),
               averageMappedMemory : Math.round(tests[i].stats.mapped.average * BYTE_TO_MEGABYTE)
@@ -1329,16 +1318,14 @@ var BYTE_TO_MEGABYTE = 1/1048576;
         context.testCount = testCount;
         context.checkpointCount = context.checkpoints.length;
         context.checkpointsPerTest = Math.round(context.checkpoints.length / testCount);
-        context.allocatedMemoryResults = allocatedMemoryResults;
+
         context.minAllocatedMemory = Math.round(resp.endurance.stats.allocated.min * BYTE_TO_MEGABYTE);
         context.maxAllocatedMemory = Math.round(resp.endurance.stats.allocated.max * BYTE_TO_MEGABYTE);
         context.averageAllocatedMemory = Math.round(resp.endurance.stats.allocated.average * BYTE_TO_MEGABYTE);
-        context.testAverageAllocatedMemoryResults = testAverageAllocatedMemoryResults;
-        context.mappedMemoryResults = mappedMemoryResults;
+
         context.minMappedMemory = Math.round(resp.endurance.stats.mapped.min * BYTE_TO_MEGABYTE);
         context.maxMappedMemory = Math.round(resp.endurance.stats.mapped.max * BYTE_TO_MEGABYTE);
         context.averageMappedMemory = Math.round(resp.endurance.stats.mapped.average * BYTE_TO_MEGABYTE);
-        context.testAverageMappedMemoryResults = testAverageMappedMemoryResults;
 
         context.render(template).replace('#content').then(function () {
 
